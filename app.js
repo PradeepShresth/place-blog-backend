@@ -16,12 +16,12 @@ app.use(express.json());
 app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 app.use(express.static(path.join('public')));
 
-// app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
-//     next();
-// })
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    next();
+})
 
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
@@ -48,8 +48,10 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An Unexpected error occured'});
 })
 
+console.log(process.env.DB_NAME);
+
 mongoose
-    .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0-9ufgo.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`)
+    .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0-9ufgo.mongodb.net/${process.env.DB_NAME}`)
     .then(() => {
         app.listen(process.env.PORT || 8080);
     })
